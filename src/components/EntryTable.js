@@ -7,12 +7,35 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import EntryModal from './EntryModal';
+import { useState } from 'react';
 import { getCategory } from '../utils/categories';
+import { clickEntry } from '../utils/mutations';
 
 // Table component that displays entries on home screen
 
-export default function EntryTable({ entries }) {
+export default function EntryTable({ entries, user }) {
+
+   /*
+
+   SORTING BEHAVIOR INCOMPLETE
+
+   // Sort entries by descending order of number of clicks
+   const handleClickSort = (e) => {
+      entries.sort((a, b) => {
+         if (a.clicks < b.clicks) {
+           return 1;
+         }
+         if (a.name > b.name) {
+           return -1;
+         }
+         return 0;
+      });
+      console.log(entries)
+   }
+   */
+
    return (
+
       <TableContainer component={Paper}>
          <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
@@ -21,6 +44,7 @@ export default function EntryTable({ entries }) {
                   <TableCell align="right">Link</TableCell>
                   <TableCell align="right">User</TableCell>
                   <TableCell align="right">Category</TableCell>
+                  <TableCell /*onClick={handleClickSort}*/ align="right">Number of Clicks</TableCell>
                   <TableCell align="right">Open</TableCell>
                </TableRow>
             </TableHead>
@@ -33,11 +57,14 @@ export default function EntryTable({ entries }) {
                      <TableCell component="th" scope="row">
                         {entry.name}
                      </TableCell>
-                     <TableCell align="right"><Link href={entry.link}>{entry.link}</Link></TableCell>
+                     <TableCell align="right"><Link onClick={() => clickEntry(entry.id, entry.clicks, entry.link)}>{entry.link}</Link></TableCell>
                      <TableCell align="right">{entry.user}</TableCell>
                      <TableCell align="right">{getCategory(entry.category).name}</TableCell>
+                     <TableCell align="right">
+                        {entry.clicks}
+                     </TableCell>
                      <TableCell sx={{ "padding-top": 0, "padding-bottom": 0 }} align="right">
-                        <EntryModal entry={entry} type="edit" />
+                        <EntryModal entry={entry} type="edit" user={user} />
                      </TableCell>
                   </TableRow>
                ))}
