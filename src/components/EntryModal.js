@@ -13,7 +13,7 @@ import TextField from '@mui/material/TextField';
 import * as React from 'react';
 import { useState } from 'react';
 import { categories } from '../utils/categories';
-import { addEntry } from '../utils/mutations';
+import { addEntry, updateEntry, deleteEntry } from '../utils/mutations';
 
 // Modal component for individual entries.
 
@@ -36,6 +36,12 @@ export default function EntryModal({ entry, type, user }) {
    const [description, setDescription] = useState(entry.description);
    const [category, setCategory] = React.useState(entry.category);
 
+   // Document ID handler
+   /*
+   const getEntryIdHandler = (id) => 
+      console.log("The document ID of this entry is: ", id);
+      setEntryID(id);
+   */
    // Modal visibility handlers
 
    const handleClickOpen = () => {
@@ -59,6 +65,7 @@ export default function EntryModal({ entry, type, user }) {
          description: description,
          user: user?.displayName ? user?.displayName : "GenericUser",
          category: category,
+         clicks: 0,
          userid: user?.uid,
       };
 
@@ -68,7 +75,28 @@ export default function EntryModal({ entry, type, user }) {
 
    // TODO: Add Edit Mutation Handler
 
+   const handleEdit = async (entryID) => {
+   
+      const editedEntry = {
+         name: name,
+         link: link,
+         description: description,
+         user: user?.displayName ? user?.displayName : "GenericUser",
+         category: category
+      };
+      updateEntry(editedEntry, entryID).catch(console.error);
+      handleClose();
+      
+   };
+
    // TODO: Add Delete Mutation Handler
+
+   const handleDelete = async (entryID) => {
+   
+      deleteEntry(entryID).catch(console.error);
+      handleClose();
+      
+   };
 
    // Button handlers for modal opening and inside-modal actions.
    // These buttons are displayed conditionally based on if adding or editing/opening.
@@ -87,6 +115,8 @@ export default function EntryModal({ entry, type, user }) {
       type === "edit" ?
          <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
+            <Button variant="contained" sx={{ backgroundColor: 'red' }} onClick={() => handleDelete(entry.id)}>Delete</Button>
+            <Button variant="contained" onClick={() => handleEdit(entry.id)}>Edit</Button>
          </DialogActions>
          : type === "add" ?
             <DialogActions>
